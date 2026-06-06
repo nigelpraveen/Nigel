@@ -1,658 +1,1771 @@
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Download,
-  ExternalLink,
-  Code2,
-  Database,
-  Network,
-  FileSpreadsheet,
-  Cpu,
-  GraduationCap,
-  Briefcase,
-  Award,
-  Target,
-  ChevronDown,
-  Sparkles,
-  Menu,
-  X,
-} from "lucide-react";
-import { useState } from "react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nigel Praveen | Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ==================================================
+           RESET & CSS VARIABLES
+        ================================================== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* Brand icons as inline SVGs (removed from lucide-react v0.468+) */
-const Github = ({ size = 24, className = "" }: { size?: number; className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    className={className}
-  >
-    <path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39.98 0 1.97.13 2.89.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.12 3.04.74.81 1.18 1.83 1.18 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14 0 1.55-.01 2.8-.01 3.18 0 .31.21.68.8.56C20.22 21.38 23.5 17.08 23.5 12 23.5 5.73 18.27.5 12 .5z" />
-  </svg>
-);
+        :root {
+            --c-bg: #0a0e17;
+            --c-bg-2: #0f1420;
+            --c-surface: #141a28;
+            --c-card: #1a2236;
+            --c-card-alt: #1e2840;
+            --c-border: #252e42;
+            --c-border-l: #2f3a52;
+            --c-text: #e8ecf4;
+            --c-text-2: #a0aec0;
+            --c-text-3: #636e85;
+            --c-primary: #6c63ff;
+            --c-primary-glow: rgba(108, 99, 255, 0.25);
+            --c-secondary: #00d4aa;
+            --c-secondary-glow: rgba(0, 212, 170, 0.2);
+            --c-amber: #f59e0b;
+            --c-amber-glow: rgba(245, 158, 11, 0.15);
+            --c-rose: #f43f5e;
+            --c-rose-glow: rgba(244, 63, 94, 0.15);
+            --c-sky: #38bdf8;
+            --c-sky-glow: rgba(56, 189, 248, 0.15);
+            --c-violet: #a78bfa;
+            --c-violet-glow: rgba(167, 139, 250, 0.15);
+            --grad-hero: linear-gradient(135deg, #6c63ff 0%, #00d4aa 100%);
+            --grad-warm: linear-gradient(135deg, #f59e0b 0%, #f43f5e 100%);
+            --grad-cool: linear-gradient(135deg, #38bdf8 0%, #6c63ff 100%);
+            --grad-nature: linear-gradient(135deg, #00d4aa 0%, #38bdf8 100%);
+            --r-sm: 8px;
+            --r-md: 12px;
+            --r-lg: 16px;
+            --r-xl: 24px;
+            --r-full: 9999px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+            --shadow-md: 0 8px 32px rgba(0,0,0,0.3);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.4);
+            --ease: cubic-bezier(0.4, 0, 0.2, 1);
+            --font: 'Outfit', sans-serif;
+            --mono: 'IBM Plex Mono', monospace;
+        }
 
-const Linkedin = ({ size = 24, className = "" }: { size?: number; className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    className={className}
-  >
-    <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z" />
-  </svg>
-);
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
 
-const NAV_LINKS = [
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
-  { label: "Experience", href: "#experience" },
-  { label: "Courses", href: "#courses" },
-  { label: "Contact", href: "#contact" },
-];
+        body {
+            font-family: var(--font);
+            background: var(--c-bg);
+            color: var(--c-text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
 
-const SKILLS = [
-  {
-    name: "Python",
-    level: 90,
-    icon: Code2,
-    description:
-      "Scripting, data manipulation, and automation. Comfortable with libraries like pandas and NumPy.",
-    color: "from-amber-400 to-orange-500",
-  },
-  {
-    name: "C Programming",
-    level: 85,
-    icon: Cpu,
-    description:
-      "Strong fundamentals in low-level programming, memory management, and algorithmic thinking.",
-    color: "from-sky-400 to-blue-600",
-  },
-  {
-    name: "SQL",
-    level: 88,
-    icon: Database,
-    description:
-      "Designing schemas, writing complex queries, joins, and optimizing data retrieval.",
-    color: "from-emerald-400 to-teal-600",
-  },
-  {
-    name: "Microsoft Excel",
-    level: 85,
-    icon: FileSpreadsheet,
-    description:
-      "Pivot tables, VLOOKUP, dashboards, and data-driven reporting for analysis.",
-    color: "from-green-400 to-emerald-600",
-  },
-  {
-    name: "Networking",
-    level: 78,
-    icon: Network,
-    description:
-      "Solid understanding of TCP/IP, OSI model, routing, and network troubleshooting.",
-    color: "from-fuchsia-400 to-purple-600",
-  },
-];
+        ::selection {
+            background: rgba(108, 99, 255, 0.4);
+            color: #fff;
+        }
 
-const COURSES = [
-  {
-    title: "Data Analytics",
-    provider: "Srishti Innovative",
-    type: "Add-on Course",
-    description:
-      "Practical training in data analytics concepts, tools, and real-world analytical workflows.",
-    icon: "📊",
-  },
-  {
-    title: "e-SIM Technology",
-    provider: "IIT Bombay (Spoken Tutorial)",
-    type: "Online Certification",
-    description:
-      "Explored embedded SIM architecture, provisioning, and the future of mobile connectivity.",
-    icon: "📡",
-  },
-  {
-    title: "GIMP – Image Editing",
-    provider: "IIT Bombay (Spoken Tutorial)",
-    type: "Online Certification",
-    description:
-      "Hands-on training in open-source image manipulation, retouching, and design workflows.",
-    icon: "🎨",
-  },
-];
+        a { color: inherit; text-decoration: none; transition: color 0.3s var(--ease); }
 
-const EXPERIENCE = [
-  {
-    role: "Intern",
-    org: "Indian Institute of Technology (IIT) Palakkad",
-    period: "Present",
-    description:
-      "Contributing to ongoing technical work at one of India's premier institutes. Applying programming, analytical, and problem-solving skills in a research-driven environment while learning from domain experts.",
-    tags: ["Research", "Programming", "Analytics", "Collaboration"],
-  },
-];
+        /* ==================================================
+           ANIMATED BACKGROUND ORBS
+        ================================================== */
+        .bg-orbs {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
 
-const EDUCATION = [
-  {
-    degree: "Bachelor of Computer Applications (BCA)",
-    school: "University Curriculum",
-    period: "Currently in 3rd Year (Final Year)",
-    description:
-      "Comprehensive study of computer science fundamentals, programming, databases, networking, and software development.",
-  },
-];
+        .bg-orbs .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.35;
+            animation: orbFloat 20s ease-in-out infinite alternate;
+        }
 
-export default function App() {
-  const [menuOpen, setMenuOpen] = useState(false);
+        .bg-orbs .orb:nth-child(1) {
+            width: 500px; height: 500px;
+            background: var(--c-primary);
+            top: -10%; left: -10%;
+            animation-delay: 0s;
+        }
 
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500/40 selection:text-white">
-      {/* Ambient background blobs */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-indigo-600/20 blur-3xl" />
-        <div className="absolute top-1/3 -right-40 h-[500px] w-[500px] rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="absolute bottom-0 left-1/3 h-[400px] w-[400px] rounded-full bg-fuchsia-600/10 blur-3xl" />
-      </div>
+        .bg-orbs .orb:nth-child(2) {
+            width: 400px; height: 400px;
+            background: var(--c-secondary);
+            bottom: -10%; right: -10%;
+            animation-delay: -7s;
+        }
 
-      {/* NAVBAR */}
-      <header className="sticky top-0 z-50 border-b border-white/5 bg-slate-950/70 backdrop-blur-xl">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <a href="#home" className="flex items-center gap-2 font-semibold tracking-tight">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-400 text-slate-950 shadow-lg shadow-indigo-500/30">
-              NP
-            </span>
-            <span className="hidden sm:inline">Nigel Praveen</span>
-          </a>
+        .bg-orbs .orb:nth-child(3) {
+            width: 350px; height: 350px;
+            background: var(--c-sky);
+            top: 40%; left: 50%;
+            animation-delay: -14s;
+            opacity: 0.2;
+        }
 
-          <ul className="hidden items-center gap-8 text-sm text-slate-300 md:flex">
-            {NAV_LINKS.map((l) => (
-              <li key={l.href}>
-                <a
-                  href={l.href}
-                  className="transition-colors hover:text-white"
-                >
-                  {l.label}
-                </a>
-              </li>
-            ))}
-          </ul>
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(40px, -60px) scale(1.05); }
+            66% { transform: translate(-30px, 40px) scale(0.95); }
+            100% { transform: translate(20px, -20px) scale(1.02); }
+        }
 
-          <a
-            href="#contact"
-            className="hidden rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-slate-200 md:inline-block"
-          >
-            Hire Me
-          </a>
+        /* ==================================================
+           NAVBAR
+        ================================================== */
+        .nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            background: rgba(10, 14, 23, 0.75);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid transparent;
+            transition: all 0.4s var(--ease);
+        }
 
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="rounded-lg p-2 text-slate-200 md:hidden"
-            aria-label="Toggle menu"
-          >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-        </nav>
+        .nav.stuck {
+            border-bottom-color: var(--c-border);
+            background: rgba(10, 14, 23, 0.92);
+        }
 
-        {menuOpen && (
-          <div className="border-t border-white/5 md:hidden">
-            <ul className="flex flex-col gap-1 px-6 py-4 text-slate-200">
-              {NAV_LINKS.map((l) => (
-                <li key={l.href}>
-                  <a
-                    href={l.href}
-                    onClick={() => setMenuOpen(false)}
-                    className="block rounded-lg px-3 py-2 hover:bg-white/5"
-                  >
-                    {l.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </header>
+        .nav-wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-      <main className="relative">
-        {/* HERO */}
-        <section
-          id="home"
-          className="mx-auto flex min-h-[92vh] max-w-6xl flex-col items-center justify-center px-6 py-20 text-center"
-        >
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs text-slate-300 backdrop-blur">
-            <Sparkles size={14} className="text-amber-300" />
-            Open to opportunities in Data Analytics & Development
-          </div>
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.15rem;
+        }
 
-          <h1 className="max-w-4xl bg-gradient-to-br from-white via-slate-100 to-slate-400 bg-clip-text text-5xl font-bold leading-tight tracking-tight text-transparent sm:text-6xl md:text-7xl">
-            Hi, I'm <span className="bg-gradient-to-r from-indigo-400 to-cyan-300 bg-clip-text text-transparent">Nigel Praveen</span>
-          </h1>
+        .nav-logo-mark {
+            width: 38px; height: 38px;
+            border-radius: var(--r-md);
+            background: var(--grad-hero);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: #fff;
+            box-shadow: 0 0 20px var(--c-primary-glow);
+        }
 
-          <p className="mt-6 max-w-2xl text-lg text-slate-300 sm:text-xl">
-            Final-year <span className="text-white">BCA</span> student, intern at{" "}
-            <span className="text-white">IIT Palakkad</span>, and aspiring{" "}
-            <span className="text-white">Data Analyst & Software Developer</span>{" "}
-            — turning data into decisions and code into solutions.
-          </p>
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 4px;
+        }
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <a
-              href="#contact"
-              className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition hover:shadow-indigo-500/50"
-            >
-              <Mail size={16} />
-              Get In Touch
-            </a>
-            <a
-              href="#about"
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur transition hover:bg-white/10"
-            >
-              <Download size={16} />
-              Explore Profile
-            </a>
-          </div>
+        .nav-links a {
+            padding: 8px 18px;
+            border-radius: var(--r-full);
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--c-text-2);
+            transition: all 0.3s var(--ease);
+        }
 
-          <div className="mt-16 flex items-center gap-5 text-slate-400">
-            <a
-              href="https://www.linkedin.com/in/nigel-praveen"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="LinkedIn"
-              className="rounded-full border border-white/10 bg-white/5 p-3 transition hover:border-cyan-400/50 hover:text-cyan-300"
-            >
-              <Linkedin size={18} />
-            </a>
-            <a
-              href="https://github.com/nigel-praveen"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub"
-              className="rounded-full border border-white/10 bg-white/5 p-3 transition hover:border-slate-300 hover:text-white"
-            >
-              <Github size={18} />
-            </a>
-            <a
-              href="mailto:nigel.praveen@email.com"
-              aria-label="Email"
-              className="rounded-full border border-white/10 bg-white/5 p-3 transition hover:border-indigo-400/50 hover:text-indigo-300"
-            >
-              <Mail size={18} />
-            </a>
-          </div>
+        .nav-links a:hover,
+        .nav-links a.current {
+            color: var(--c-text);
+            background: rgba(255,255,255,0.06);
+        }
 
-          <a
-            href="#about"
-            className="mt-16 flex animate-bounce flex-col items-center gap-1 text-xs uppercase tracking-widest text-slate-500"
-          >
-            Scroll
-            <ChevronDown size={18} />
-          </a>
-        </section>
+        .nav-resume {
+            padding: 8px 20px;
+            border-radius: var(--r-full);
+            background: rgba(108, 99, 255, 0.15);
+            color: var(--c-primary) !important;
+            font-weight: 600;
+            border: 1px solid rgba(108, 99, 255, 0.25);
+            font-size: 0.85rem;
+        }
 
-        {/* ABOUT */}
-        <Section id="about" title="About Me" kicker="01 — Introduction">
-          <div className="grid gap-10 md:grid-cols-[1.2fr_1fr] md:items-start">
-            <div className="space-y-5 text-slate-300 leading-relaxed">
-              <p>
-                I'm a final-year <span className="text-white">Bachelor of Computer Applications (BCA)</span> student
-                with a deep interest in how data and software shape the modern world. My journey so far has
-                been a blend of strong academic fundamentals, hands-on tooling, and real-world exposure
-                through internships and certification programs.
-              </p>
-              <p>
-                I'm currently interning at the <span className="text-white">Indian Institute of Technology (IIT) Palakkad</span>,
-                where I get to work alongside researchers and sharpen my analytical thinking. Alongside my
-                degree, I've completed add-on courses from <span className="text-white">IIT Bombay</span> and{" "}
-                <span className="text-white">Srishti Innovative</span>, covering areas from Data Analytics
-                to emerging tech like e-SIM.
-              </p>
-              <p>
-                I'm actively looking ahead to opportunities in{" "}
-                <span className="text-white">Data Analytics, Programming, and related technical roles</span> —
-                where I can keep learning, contribute meaningfully, and build things that matter.
-              </p>
-            </div>
+        .nav-resume:hover {
+            background: rgba(108, 99, 255, 0.25) !important;
+        }
 
-            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6 backdrop-blur">
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-widest text-slate-400">
-                Quick Facts
-              </h3>
-              <ul className="space-y-3 text-sm">
-                <QuickFact icon={<MapPin size={16} />} label="Based in" value="India" />
-                <QuickFact icon={<GraduationCap size={16} />} label="Education" value="BCA — 3rd Year" />
-                <QuickFact icon={<Briefcase size={16} />} label="Internship" value="IIT Palakkad" />
-                <QuickFact icon={<Target size={16} />} label="Focus" value="Data & Software" />
-                <QuickFact icon={<Linkedin size={16} />} label="Network" value="Active on LinkedIn" />
-              </ul>
-            </div>
-          </div>
-        </Section>
+        .burger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            background: none;
+            border: none;
+        }
 
-        {/* SKILLS */}
-        <Section id="skills" title="Technical Skills" kicker="02 — What I Work With">
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {SKILLS.map((skill) => {
-              const Icon = skill.icon;
-              return (
-                <div
-                  key={skill.name}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.06]"
-                >
-                  <div
-                    className={`absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br ${skill.color} opacity-20 blur-2xl transition group-hover:opacity-40`}
-                  />
-                  <div
-                    className={`mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${skill.color} text-slate-950 shadow-lg`}
-                  >
-                    <Icon size={20} />
-                  </div>
-                  <h3 className="mb-1 text-lg font-semibold text-white">{skill.name}</h3>
-                  <p className="mb-4 text-sm text-slate-400">{skill.description}</p>
-                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-                    <div
-                      className={`h-full rounded-full bg-gradient-to-r ${skill.color}`}
-                      style={{ width: `${skill.level}%` }}
-                    />
-                  </div>
-                  <div className="mt-2 text-right text-xs text-slate-400">{skill.level}%</div>
-                </div>
-              );
-            })}
-          </div>
-        </Section>
+        .burger span {
+            display: block;
+            width: 24px; height: 2px;
+            background: var(--c-text);
+            border-radius: 2px;
+            transition: 0.3s var(--ease);
+        }
 
-        {/* EXPERIENCE */}
-        <Section id="experience" title="Experience & Education" kicker="03 — My Journey">
-          <div className="grid gap-10 md:grid-cols-2">
-            {/* Experience */}
-            <div>
-              <div className="mb-5 flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-300">
-                  <Briefcase size={18} />
-                </div>
-                <h3 className="text-xl font-semibold text-white">Experience</h3>
-              </div>
-              <div className="space-y-5">
-                {EXPERIENCE.map((exp) => (
-                  <div
-                    key={exp.role}
-                    className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-indigo-400/30"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <h4 className="text-lg font-semibold text-white">{exp.role}</h4>
-                        <p className="text-sm text-indigo-300">{exp.org}</p>
-                      </div>
-                      <span className="whitespace-nowrap rounded-full border border-indigo-400/30 bg-indigo-500/10 px-3 py-1 text-xs font-medium text-indigo-200">
-                        {exp.period}
-                      </span>
-                    </div>
-                    <p className="mt-3 text-sm text-slate-300">{exp.description}</p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {exp.tags.map((t) => (
-                        <span
-                          key={t}
-                          className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300"
-                        >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+        /* ==================================================
+           HERO
+        ================================================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 100px 28px 80px;
+            position: relative;
+            z-index: 1;
+        }
 
-            {/* Education */}
-            <div>
-              <div className="mb-5 flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-cyan-500/20 text-cyan-300">
-                  <GraduationCap size={18} />
-                </div>
-                <h3 className="text-xl font-semibold text-white">Education</h3>
-              </div>
-              <div className="space-y-5">
-                {EDUCATION.map((ed) => (
-                  <div
-                    key={ed.degree}
-                    className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-cyan-400/30"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <h4 className="text-lg font-semibold text-white">{ed.degree}</h4>
-                        <p className="text-sm text-cyan-300">{ed.school}</p>
-                      </div>
-                      <span className="whitespace-nowrap rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-200">
-                        {ed.period}
-                      </span>
-                    </div>
-                    <p className="mt-3 text-sm text-slate-300">{ed.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </Section>
+        .hero-wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
 
-        {/* COURSES */}
-        <Section id="courses" title="Certifications & Courses" kicker="04 — Continuous Learning">
-          <div className="grid gap-5 md:grid-cols-3">
-            {COURSES.map((c) => (
-              <div
-                key={c.title}
-                className="group flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.06]"
-              >
-                <div className="mb-4 flex items-center justify-between">
-                  <span className="text-3xl">{c.icon}</span>
-                  <Award size={18} className="text-amber-300" />
-                </div>
-                <h3 className="text-lg font-semibold text-white">{c.title}</h3>
-                <p className="mt-1 text-sm text-indigo-300">{c.provider}</p>
-                <span className="mt-2 inline-block w-fit rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-xs text-slate-300">
-                  {c.type}
-                </span>
-                <p className="mt-4 flex-1 text-sm text-slate-400">{c.description}</p>
-              </div>
-            ))}
-          </div>
-        </Section>
+        .hero-top-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 18px;
+            border-radius: var(--r-full);
+            background: rgba(0, 212, 170, 0.1);
+            border: 1px solid rgba(0, 212, 170, 0.2);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--c-secondary);
+            margin-bottom: 32px;
+            animation: fadeUp 0.8s var(--ease) both;
+        }
 
-        {/* LOOKING AHEAD */}
-        <Section id="goals" title="Looking Ahead" kicker="05 — What's Next">
-          <div className="overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-600/20 via-slate-900 to-cyan-500/10 p-8 sm:p-12">
-            <div className="grid items-center gap-8 md:grid-cols-[1.5fr_1fr]">
-              <div>
-                <h3 className="text-2xl font-bold text-white sm:text-3xl">
-                  Ready to contribute. Eager to grow.
-                </h3>
-                <p className="mt-4 text-slate-300">
-                  I'm actively seeking opportunities in{" "}
-                  <span className="text-white">Data Analytics</span>,{" "}
-                  <span className="text-white">Software Development</span>, and related
-                  technical domains — roles where I can apply my analytical mindset, programming
-                  skills, and hunger to learn in a team that values growth and impact.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  {["Data Analyst", "Python Developer", "SQL Developer", "Software Engineer"].map((t) => (
-                    <span
-                      key={t}
-                      className="rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm text-slate-100 backdrop-blur"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
+        .hero-top-tag .pulse-ring {
+            width: 8px; height: 8px;
+            background: var(--c-secondary);
+            border-radius: 50%;
+            position: relative;
+        }
 
-              <div className="flex flex-col items-start gap-3">
-                <a
-                  href="#contact"
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
-                >
-                  Let's Connect <ExternalLink size={14} />
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/nigel-praveen"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 text-sm text-slate-300 hover:text-white"
-                >
-                  <Linkedin size={16} />
-                  linkedin.com/in/nigel-praveen
-                </a>
-              </div>
-            </div>
-          </div>
-        </Section>
+        .hero-top-tag .pulse-ring::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid var(--c-secondary);
+            animation: ringPulse 2s ease-out infinite;
+        }
 
-        {/* CONTACT */}
-        <Section id="contact" title="Get In Touch" kicker="06 — Contact">
-          <div className="grid gap-6 md:grid-cols-3">
-            <ContactCard
-              icon={<Phone size={20} />}
-              label="Phone"
-              value="+91 12345 67890"
-              href="tel:+911234567890"
-            />
-            <ContactCard
-              icon={<Mail size={20} />}
-              label="Email"
-              value="nigel.praveen@email.com"
-              href="mailto:nigel.praveen@email.com"
-            />
-            <ContactCard
-              icon={<Linkedin size={20} />}
-              label="LinkedIn"
-              value="linkedin.com/in/nigel-praveen"
-              href="https://www.linkedin.com/in/nigel-praveen"
-              external
-            />
-          </div>
+        @keyframes ringPulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
 
-          <div className="mt-10 rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-center">
-            <h3 className="text-2xl font-bold text-white sm:text-3xl">
-              Let's build something meaningful together.
-            </h3>
-            <p className="mx-auto mt-3 max-w-xl text-slate-400">
-              Whether it's a data-driven project, a development role, or a simple conversation
-              about tech — I'd love to hear from you.
-            </p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <a
-                href="mailto:nigel.praveen@email.com"
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition hover:shadow-indigo-500/50"
-              >
-                <Mail size={16} />
-                Send an Email
-              </a>
-              <a
-                href="https://www.linkedin.com/in/nigel-praveen"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur transition hover:bg-white/10"
-              >
-                <Linkedin size={16} />
-                Connect on LinkedIn
-              </a>
-            </div>
-          </div>
-        </Section>
-      </main>
+        .hero-name {
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 800;
+            line-height: 1.0;
+            letter-spacing: -3px;
+            margin-bottom: 8px;
+            animation: fadeUp 0.8s var(--ease) 0.1s both;
+        }
 
-      {/* FOOTER */}
-      <footer className="relative mt-10 border-t border-white/5 bg-slate-950/60">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-slate-400 sm:flex-row">
-          <p>© {new Date().getFullYear()} Nigel Praveen. All rights reserved.</p>
-          <p className="flex items-center gap-2">
-            Built with <span className="text-rose-400">♥</span> and hosted on GitHub Pages
-          </p>
-        </div>
-      </footer>
+        .hero-name .accent {
+            background: var(--grad-hero);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-role {
+            font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+            font-weight: 400;
+            color: var(--c-text-2);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            animation: fadeUp 0.8s var(--ease) 0.2s both;
+        }
+
+        .hero-role .typed {
+            color: var(--c-primary);
+            font-weight: 600;
+            border-right: 2px solid var(--c-primary);
+            padding-right: 4px;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        .hero-sub {
+            font-size: 1.05rem;
+            color: var(--c-text-3);
+            max-width: 620px;
+            margin-bottom: 40px;
+            line-height: 1.9;
+            animation: fadeUp 0.8s var(--ease) 0.3s both;
+        }
+
+        .hero-sub strong {
+            color: var(--c-text-2);
+            font-weight: 600;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 56px;
+            animation: fadeUp 0.8s var(--ease) 0.4s both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 30px;
+            border-radius: var(--r-full);
+            font-family: var(--font);
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.35s var(--ease);
+        }
+
+        .btn-fill {
+            background: var(--grad-hero);
+            color: #fff;
+            box-shadow: 0 4px 24px var(--c-primary-glow);
+        }
+
+        .btn-fill:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 40px rgba(108, 99, 255, 0.4);
+            color: #fff;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--c-text);
+            border: 1.5px solid var(--c-border-l);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--c-primary);
+            background: rgba(108, 99, 255, 0.08);
+            color: var(--c-primary);
+            transform: translateY(-3px);
+        }
+
+        .hero-metrics {
+            display: flex;
+            gap: 48px;
+            flex-wrap: wrap;
+            animation: fadeUp 0.8s var(--ease) 0.5s both;
+        }
+
+        .metric {
+            text-align: left;
+        }
+
+        .metric-val {
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.1;
+            background: var(--grad-hero);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-label {
+            font-size: 0.78rem;
+            color: var(--c-text-3);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 500;
+        }
+
+        /* ==================================================
+           COMMON SECTION STYLES
+        ================================================== */
+        .sec {
+            padding: 110px 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sec-alt {
+            background: var(--c-bg-2);
+        }
+
+        .wrap {
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+
+        .sec-label {
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--c-primary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sec-label::before {
+            content: '';
+            width: 24px; height: 2px;
+            background: var(--c-primary);
+            border-radius: 2px;
+        }
+
+        .sec-title {
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            margin-bottom: 14px;
+            line-height: 1.15;
+        }
+
+        .sec-desc {
+            color: var(--c-text-3);
+            font-size: 1rem;
+            max-width: 520px;
+            margin-bottom: 56px;
+        }
+
+        /* ==================================================
+           ABOUT
+        ================================================== */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 56px;
+            align-items: start;
+        }
+
+        .about-body h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .about-body p {
+            color: var(--c-text-2);
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+
+        .about-body p strong {
+            color: var(--c-text);
+        }
+
+        .about-pills {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .pill {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: var(--c-card);
+            border: 1px solid var(--c-border);
+            border-radius: var(--r-md);
+            transition: all 0.3s var(--ease);
+        }
+
+        .pill:hover {
+            border-color: var(--c-primary);
+            transform: translateY(-2px);
+        }
+
+        .pill-icon {
+            width: 38px; height: 38px;
+            border-radius: var(--r-sm);
+            display: grid;
+            place-items: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .pill-text {
+            font-size: 0.82rem;
+            line-height: 1.4;
+        }
+
+        .pill-text span {
+            display: block;
+            color: var(--c-text-3);
+            font-size: 0.72rem;
+        }
+
+        /* Code card */
+        .code-card {
+            background: var(--c-card);
+            border: 1px solid var(--c-border);
+            border-radius: var(--r-lg);
+            overflow: hidden;
+            position: sticky;
+            top: 96px;
+        }
+
+        .code-card-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 20px;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid var(--c-border);
+        }
+
+        .cc-dot {
+            width: 11px; height: 11px;
+            border-radius: 50%;
+        }
+
+        .cc-dot.r { background: #ff5f57; }
+        .cc-dot.y { background: #ffbd2e; }
+        .cc-dot.g { background: #28c840; }
+
+        .cc-title {
+            flex: 1;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--c-text-3);
+        }
+
+        .code-card-body {
+            padding: 24px;
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            line-height: 2.1;
+        }
+
+        .ln { margin-bottom: 2px; }
+        .ln-p { color: var(--c-secondary); }
+        .ln-c { color: var(--c-text-3); }
+        .ln-k { color: var(--c-violet); }
+        .ln-s { color: var(--c-amber); }
+        .ln-f { color: var(--c-primary); }
+        .ln-b { color: var(--c-rose); }
+        .ln-cu { color: var(--c-sky); }
+
+        /* ==================================================
+           SKILLS
+        ================================================== */
+        .skill-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .sk-card {
+            background: var(--c-card);
+            border: 1px solid var(--c-border);
+            border-radius: var(--r-lg);
+            padding: 30px;
+            transition: all 0.4s var(--ease);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sk-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            opacity: 0;
+            transition: opacity 0.4s var(--ease);
+        }
+
+        .sk-card:nth-child(1)::before { background: var(--grad-cool); }
+        .sk-card:nth-child(2)::before { background: var(--grad-nature); }
+        .sk-card:nth-child(3)::before { background: var(--grad-warm); }
+        .sk-card:nth-child(4)::before { background: var(--grad-cool); }
+        .sk-card:nth-child(5)::before { background: var(--grad-nature); }
+        .sk-card:nth-child(6)::before { background: var(--grad-warm); }
+
+        .sk-card:hover {
+            border-color: var(--c-border-l);
+            background: var(--c-card-alt);
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .sk-card:hover::before {
+            opacity: 1;
+        }
+
+        .sk-top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .sk-icon {
+            width: 48px; height: 48px;
+            border-radius: var(--r-md);
+            display: grid;
+            place-items: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .sk-card h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .sk-card > p {
+            color: var(--c-text-3);
+            font-size: 0.84rem;
+            margin-bottom: 18px;
+            line-height: 1.65;
+        }
+
+        .sk-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sk-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sk-bar-name {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            color: var(--c-text-3);
+            min-width: 55px;
+        }
+
+        .sk-bar-track {
+            flex: 1;
+            height: 5px;
+            background: var(--c-border);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .sk-bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            width: 0;
+            transition: width 1.8s var(--ease);
+        }
+
+        .sk-bar-fill.g1 { background: var(--grad-cool); }
+        .sk-bar-fill.g2 { background: var(--grad-nature); }
+        .sk-bar-fill.g3 { background: var(--grad-warm); }
+
+        /* ==================================================
+           EDUCATION & COURSES
+        ================================================== */
+        .edu-split {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 48px;
+        }
+
+        .edu-left h3,
+        .edu-right h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-count {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: var(--r-full);
+            font-weight: 600;
+        }
+
+        .edu-card {
+            background: var(--c-card);
+            border: 1px solid var(--c-border);
+            border-radius: var(--r-lg);
+            padding: 28px;
+            margin-bottom: 16px;
+            position: relative;
+            transition: all 0.3s var(--ease);
+            border-left: 3px solid transparent;
+        }
+
+        .edu-card:hover {
+            border-left-color: var(--c-primary);
+            transform: translateX(6px);
+            border-color: var(--c-border-l);
+        }
+
+        .edu-card .tag {
+            display: inline-block;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 3px 12px;
+            border-radius: var(--r-full);
+            margin-bottom: 12px;
+        }
+
+        .edu-card h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .edu-card .org {
+            font-size: 0.88rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .edu-card p {
+            color: var(--c-text-3);
+            font-size: 0.84rem;
+            line-height: 1.7;
+        }
+
+        /* ==================================================
+           EXPERIENCE
+        ================================================== */
+        .exp-center {
+            max-width: 780px;
+            margin: 0 auto;
+        }
+
+        .exp-card {
+            background: var(--c-card);
+            border: 1px solid var(--c-border);
+            border-radius: var(--r-xl);
+            padding: 44px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s var(--ease);
+        }
+
+        .exp-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--grad-hero);
+        }
+
+        .exp-card:hover {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--c-border-l);
+        }
+
+        .exp-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .exp-card h3 {
+            font-size: 1.45rem;
+            font-weight: 800;
+        }
+
+        .exp-card .exp-org {
+            color: var(--c-primary);
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .exp-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 18px;
+            background: rgba(0, 212, 170, 0.12);
+            border: 1px solid rgba(0, 212, 170, 0.3);
+            border-radius: var(--r-full);
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--c-secondary);
+        }
+
+        .exp-live .dot {
+            width: 7px; height: 7px;
+            background: var(--c-secondary);
+            border-radius: 50%;
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 212, 170, 0.4); }
+            50% { opacity: 0.6; box-shadow: 0 0 0 6px rgba(0, 212, 170, 0); }
+        }
+
+        .exp-period {
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            color: var(--c-text-3);
+            margin-bottom: 20px;
+        }
+
+        .exp-body {
+            color: var(--c-text-2);
+            font-size: 0.95rem;
+            margin-bottom: 28px;
+            line-height: 1.85;
+        }
+
+        .exp-points {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .exp-points li {
+            display: flex;
+            gap: 14px;
+            color: var(--c-text-2);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .exp-points li .icon {
+            flex-shrink: 0;
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            background: var(--c-primary-glow);
+            display: grid;
+            place-items: center;
+            font-size: 0.65rem;
+            color: var(--c-primary);
+            margin-top: 3px;
+        }
+
+        /* ==================================================
+           CONTACT
+        ================================================== */
+        .contact-split {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 48px;
+        }
+
+        .contact-left h3 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .contact-left > p {
+            color: var(--c-text-2);
+            font-size: 0.95rem;
+            margin-bottom: 36px;
+            line-height: 1.85;
+        }
+
+        .contact-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cm {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 22px;
+            background: var(--c-card);
+            border: 1px solid var(--c-border);
+            border-radius: var(--r-md);
+            color: var(--c-text);
+            transition: all 0.35s var(--ease);
+        }
+
+        .cm:hover {
+            border-color: var(--c-primary);
+            transform: translateX(6px);
+            color: var(--c-text);
+        }
+
+        .cm-icon {
+            width: 46px; height: 46px;
+            border-radius: var(--r-md);
+            display: grid;
+            place-items: center;
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
+
+        .cm-info {
+            flex: 1;
+        }
+
+        .cm-info strong {
+            display: block;
+            font-size: 0.92rem;
+        }
+
+        .cm-info span {
+            font-size: 0.78rem;
+            color: var(--c-text-3);
+        }
+
+        .form-card {
+            background: var(--c-card);
+            border: 1px solid var(--c-border);
+            border-radius: var(--r-xl);
+            padding: 36px;
+        }
+
+        .form-card h4 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 28px;
+        }
+
+        .fg {
+            margin-bottom: 18px;
+        }
+
+        .fg label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--c-text-3);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+
+        .fg input,
+        .fg textarea {
+            width: 100%;
+            padding: 13px 18px;
+            background: var(--c-bg);
+            border: 1px solid var(--c-border);
+            border-radius: var(--r-sm);
+            color: var(--c-text);
+            font-family: var(--font);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s var(--ease);
+        }
+
+        .fg input:focus,
+        .fg textarea:focus {
+            border-color: var(--c-primary);
+            box-shadow: 0 0 0 4px var(--c-primary-glow);
+        }
+
+        .fg textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .fg-submit {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: var(--r-sm);
+            background: var(--grad-hero);
+            color: #fff;
+            font-family: var(--font);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.35s var(--ease);
+        }
+
+        .fg-submit:hover {
+            box-shadow: 0 8px 32px var(--c-primary-glow);
+            transform: translateY(-2px);
+        }
+
+        /* ==================================================
+           FOOTER
+        ================================================== */
+        .footer {
+            background: var(--c-bg-2);
+            border-top: 1px solid var(--c-border);
+            padding: 48px 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-wrap {
+            max-width: 1140px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 10px;
+        }
+
+        .fs {
+            width: 42px; height: 42px;
+            border-radius: var(--r-md);
+            background: var(--c-card);
+            border: 1px solid var(--c-border);
+            display: grid;
+            place-items: center;
+            color: var(--c-text-3);
+            font-size: 1rem;
+            transition: all 0.3s var(--ease);
+        }
+
+        .fs:hover {
+            border-color: var(--c-primary);
+            color: var(--c-primary);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px var(--c-primary-glow);
+        }
+
+        .footer-copy {
+            font-size: 0.82rem;
+            color: var(--c-text-3);
+        }
+
+        .footer-copy .hi {
+            color: var(--c-primary);
+            font-weight: 600;
+        }
+
+        /* ==================================================
+           SCROLL REVEAL
+        ================================================== */
+        .rv {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+        }
+
+        .rv.vis {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .rv-d1 { transition-delay: 0.1s; }
+        .rv-d2 { transition-delay: 0.2s; }
+        .rv-d3 { transition-delay: 0.3s; }
+        .rv-d4 { transition-delay: 0.4s; }
+
+        /* ==================================================
+           RESPONSIVE
+        ================================================== */
+        @media (max-width: 1024px) {
+            .about-grid { grid-template-columns: 1fr; }
+            .edu-split { grid-template-columns: 1fr; }
+            .contact-split { grid-template-columns: 1fr; }
+            .skill-grid { grid-template-columns: repeat(2, 1fr); }
+            .code-card { position: static; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 72px; left: 0; right: 0;
+                background: rgba(10, 14, 23, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 20px 24px;
+                gap: 4px;
+                border-bottom: 1px solid var(--c-border);
+                transform: translateY(-130%);
+                transition: transform 0.4s var(--ease);
+            }
+
+            .nav-links.open { transform: translateY(0); }
+            .burger { display: flex; }
+            .skill-grid { grid-template-columns: 1fr; }
+            .about-pills { grid-template-columns: 1fr; }
+            .hero-metrics { gap: 32px; }
+            .exp-card { padding: 28px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-actions { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+            .hero-metrics { flex-direction: column; gap: 20px; }
+            .footer-wrap { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background Orbs -->
+<div class="bg-orbs">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+</div>
+
+<!-- ===== NAVIGATION ===== -->
+<nav class="nav" id="nav">
+    <div class="nav-wrap">
+        <a href="#hero" class="nav-logo">
+            <div class="nav-logo-mark">NP</div>
+            Nigel Praveen
+        </a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#about" class="current">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#education">Education</a></li>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#contact" class="nav-resume">Hire Me</a></li>
+        </ul>
+        <button class="burger" id="burger" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
     </div>
-  );
-}
+</nav>
 
-/* ---------------- Helpers ---------------- */
-
-function Section({
-  id,
-  kicker,
-  title,
-  children,
-}: {
-  id: string;
-  kicker: string;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section id={id} className="mx-auto max-w-6xl scroll-mt-24 px-6 py-20">
-      <div className="mb-12">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-indigo-400">
-          {kicker}
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+    <div class="hero-wrap">
+        <div class="hero-top-tag">
+            <span class="pulse-ring"></span>
+            Open to Opportunities
+        </div>
+        <h1 class="hero-name">Hi, I'm<br><span class="accent">Nigel Praveen</span></h1>
+        <p class="hero-role">Aspiring <span class="typed" id="typedRole">Data Analyst</span></p>
+        <p class="hero-sub">
+            A results-driven third-year BCA student passionate about uncovering insights from data
+            and building efficient software solutions. Currently sharpening my skills through a
+            hands-on internship at <strong>IIT Palakkad</strong> while pursuing certifications
+            from <strong>IIT Bombay</strong> and <strong>Srishti Innovative</strong>.
         </p>
-        <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-          {title}
-        </h2>
-        <div className="mt-4 h-1 w-16 rounded-full bg-gradient-to-r from-indigo-500 to-cyan-400" />
-      </div>
-      {children}
-    </section>
-  );
-}
+        <div class="hero-actions">
+            <a href="#contact" class="btn btn-fill">✉️ Get In Touch</a>
+            <a href="#experience" class="btn btn-outline">📄 View Experience</a>
+        </div>
+        <div class="hero-metrics">
+            <div class="metric">
+                <div class="metric-val">5+</div>
+                <div class="metric-label">Certifications</div>
+            </div>
+            <div class="metric">
+                <div class="metric-val">3+</div>
+                <div class="metric-label">Core Skills</div>
+            </div>
+            <div class="metric">
+                <div class="metric-val">1</div>
+                <div class="metric-label">Internship</div>
+            </div>
+            <div class="metric">
+                <div class="metric-val">3rd</div>
+                <div class="metric-label">Year BCA</div>
+            </div>
+        </div>
+    </div>
+</section>
 
-function QuickFact({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <li className="flex items-center justify-between gap-4 border-b border-white/5 pb-3 last:border-b-0 last:pb-0">
-      <span className="flex items-center gap-3 text-slate-400">
-        <span className="text-indigo-300">{icon}</span>
-        {label}
-      </span>
-      <span className="text-right text-slate-100">{value}</span>
-    </li>
-  );
-}
+<!-- ===== ABOUT ===== -->
+<section class="sec sec-alt" id="about">
+    <div class="wrap">
+        <div class="sec-label rv">About</div>
+        <h2 class="sec-title rv">Who I Am &amp; What Drives Me</h2>
+        <div class="about-grid">
+            <div class="about-body rv">
+                <h3>👋 A Little Bit About Myself</h3>
+                <p>
+                    I'm <strong>Nigel Praveen</strong>, a passionate and detail-oriented third-year BCA student
+                    with a strong inclination towards <strong>data analytics</strong> and <strong>programming</strong>.
+                    My academic journey has equipped me with a solid foundation in computer science principles,
+                    while my proactive pursuit of certified courses has given me practical, industry-relevant skills.
+                </p>
+                <p>
+                    Currently, I'm interning at <strong>IIT Palakkad</strong>, one of India's premier research
+                    institutions, where I'm applying my analytical and programming skills to contribute to
+                    meaningful data-driven projects. This experience has deepened my understanding of how
+                    theory translates into real-world impact.
+                </p>
+                <p>
+                    Beyond internships, I've earned certifications from <strong>IIT Bombay</strong> in e-SIM
+                    technology and GIMP image editing, and completed a comprehensive <strong>Data Analytics</strong>
+                    program from <strong>Srishti Innovative</strong>. These experiences reflect my commitment
+                    to continuous learning and staying ahead in an ever-evolving tech landscape.
+                </p>
+                <p>
+                    I'm actively seeking opportunities in <strong>data analytics</strong>, <strong>software
+                    development</strong>, and <strong>programming</strong> roles where I can contribute
+                    meaningfully while furthering my professional growth.
+                </p>
+                <div class="about-pills">
+                    <div class="pill">
+                        <div class="pill-icon" style="background:var(--c-primary-glow);">🎓</div>
+                        <div class="pill-text">
+                            <strong>BCA 3rd Year</strong>
+                            <span>Currently Pursuing</span>
+                        </div>
+                    </div>
+                    <div class="pill">
+                        <div class="pill-icon" style="background:var(--c-secondary-glow);">🏢</div>
+                        <div class="pill-text">
+                            <strong>IIT Palakkad</strong>
+                            <span>Intern · Current</span>
+                        </div>
+                    </div>
+                    <div class="pill">
+                        <div class="pill-icon" style="background:var(--c-amber-glow);">📍</div>
+                        <div class="pill-text">
+                            <strong>India</strong>
+                            <span>Remote & On-site</span>
+                        </div>
+                    </div>
+                    <div class="pill">
+                        <div class="pill-icon" style="background:var(--c-rose-glow);">🎯</div>
+                        <div class="pill-text">
+                            <strong>Data + Code</strong>
+                            <span>Core Focus Areas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="code-card rv rv-d2">
+                <div class="code-card-bar">
+                    <span class="cc-dot r"></span>
+                    <span class="cc-dot y"></span>
+                    <span class="cc-dot g"></span>
+                    <span class="cc-title">nigel_praveen.py</span>
+                </div>
+                <div class="code-card-body">
+                    <div class="ln"><span class="ln-c"># ── profile.py ──</span></div>
+                    <div class="ln">&nbsp;</div>
+                    <div class="ln"><span class="ln-k">class</span> <span class="ln-f">Profile</span>:</div>
+                    <div class="ln">&nbsp;&nbsp;<span class="ln-k">def</span> <span class="ln-f">__init__</span>(self):</div>
+                    <div class="ln">&nbsp;&nbsp;&nbsp;&nbsp;self.<span class="ln-cu">name</span> = <span class="ln-s">"Nigel Praveen"</span></div>
+                    <div class="ln">&nbsp;&nbsp;&nbsp;&nbsp;self.<span class="ln-cu">education</span> = <span class="ln-s">"BCA — 3rd Year"</span></div>
+                    <div class="ln">&nbsp;&nbsp;&nbsp;&nbsp;self.<span class="ln-cu">internship</span> = <span class="ln-s">"IIT Palakkad"</span></div>
+                    <div class="ln">&nbsp;&nbsp;&nbsp;&nbsp;self.<span class="ln-cu">status</span> = <span class="ln-s">"🔍 Open to Work"</span></div>
+                    <div class="ln">&nbsp;</div>
+                    <div class="ln">&nbsp;&nbsp;<span class="ln-k">def</span> <span class="ln-f">skills</span>(self):</div>
+                    <div class="ln">&nbsp;&nbsp;&nbsp;&nbsp;<span class="ln-k">return</span> [</div>
+                    <div class="ln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ln-s">"Python"</span>, <span class="ln-s">"C"</span>,</div>
+                    <div class="ln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ln-s">"SQL"</span>, <span class="ln-s">"Excel"</span>,</div>
+                    <div class="ln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ln-s">"Networking"</span></div>
+                    <div class="ln">&nbsp;&nbsp;&nbsp;&nbsp;]</div>
+                    <div class="ln">&nbsp;</div>
+                    <div class="ln">&nbsp;&nbsp;<span class="ln-k">def</span> <span class="ln-f">certifications</span>(self):</div>
+                    <div class="ln">&nbsp;&nbsp;&nbsp;&nbsp;<span class="ln-k">return</span> [</div>
+                    <div class="ln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ln-s">"eSIM — IIT Bombay"</span>,</div>
+                    <div class="ln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ln-s">"GIMP — IIT Bombay"</span>,</div>
+                    <div class="ln">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ln-s">"Analytics — Srishti"</span></div>
+                    <div class="ln">&nbsp;&nbsp;&nbsp;&nbsp;]</div>
+                    <div class="ln">&nbsp;</div>
+                    <div class="ln"><span class="ln-p">me</span> = Profile()</div>
+                    <div class="ln"><span class="ln-b">print</span>(<span class="ln-p">me</span>.<span class="ln-f">skills</span>())</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-function ContactCard({
-  icon,
-  label,
-  value,
-  href,
-  external,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  href: string;
-  external?: boolean;
-}) {
-  return (
-    <a
-      href={href}
-      target={external ? "_blank" : undefined}
-      rel={external ? "noreferrer" : undefined}
-      className="group flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:-translate-y-1 hover:border-indigo-400/40 hover:bg-white/[0.06]"
-    >
-      <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 text-white shadow-lg">
-        {icon}
-      </div>
-      <div className="min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-          {label}
+<!-- ===== SKILLS ===== -->
+<section class="sec" id="skills">
+    <div class="wrap">
+        <div class="sec-label rv">Skills</div>
+        <h2 class="sec-title rv">Technical Expertise</h2>
+        <p class="sec-desc rv">A versatile toolkit built through academics, certifications, and hands-on project experience.</p>
+        <div class="skill-grid">
+
+            <div class="sk-card rv">
+                <div class="sk-top">
+                    <div class="sk-icon" style="background:var(--c-sky-glow);">🐍</div>
+                    <h4>Python</h4>
+                </div>
+                <p>Data analysis, scripting, automation, and rapid prototyping with Python's rich ecosystem.</p>
+                <div class="sk-bars">
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">Pandas</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g1" data-w="82%"></div></div>
+                    </div>
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">NumPy</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g1" data-w="75%"></div></div>
+                    </div>
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">Scripting</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g1" data-w="88%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sk-card rv rv-d1">
+                <div class="sk-top">
+                    <div class="sk-icon" style="background:var(--c-secondary-glow);">📊</div>
+                    <h4>Data Analytics</h4>
+                </div>
+                <p>Extracting meaningful insights from datasets using analytical tools and visualization techniques.</p>
+                <div class="sk-bars">
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">Analysis</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g2" data-w="85%"></div></div>
+                    </div>
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">Viz</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g2" data-w="78%"></div></div>
+                    </div>
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">Reports</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g2" data-w="80%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sk-card rv rv-d2">
+                <div class="sk-top">
+                    <div class="sk-icon" style="background:var(--c-violet-glow);">🗄️</div>
+                    <h4>SQL & Databases</h4>
+                </div>
+                <p>Querying, managing, and analyzing relational databases with efficient SQL operations.</p>
+                <div class="sk-bars">
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">Queries</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g3" data-w="80%"></div></div>
+                    </div>
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">Joins</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g3" data-w="75%"></div></div>
+                    </div>
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">Schema</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g3" data-w="70%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sk-card rv">
+                <div class="sk-top">
+                    <div class="sk-icon" style="background:var(--c-amber-glow);">⚙️</div>
+                    <h4>C Programming</h4>
+                </div>
+                <p>Solid foundation in systems programming, algorithms, and low-level computational problem-solving.</p>
+                <div class="sk-bars">
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">Logic</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g1" data-w="82%"></div></div>
+                    </div>
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">DSA</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g1" data-w="72%"></div></div>
+                    </div>
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">OOP</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g1" data-w="75%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sk-card rv rv-d1">
+                <div class="sk-top">
+                    <div class="sk-icon" style="background:var(--c-primary-glow);">📈</div>
+                    <h4>Microsoft Excel</h4>
+                </div>
+                <p>Advanced spreadsheet operations, pivot tables, data modeling, and business intelligence reporting.</p>
+                <div class="sk-bars">
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">Formulas</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g2" data-w="88%"></div></div>
+                    </div>
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">Pivot</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g2" data-w="82%"></div></div>
+                    </div>
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">Macros</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g2" data-w="62%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sk-card rv rv-d2">
+                <div class="sk-top">
+                    <div class="sk-icon" style="background:var(--c-rose-glow);">🌐</div>
+                    <h4>Networking</h4>
+                </div>
+                <p>Understanding of network protocols, infrastructure configuration, and connectivity management.</p>
+                <div class="sk-bars">
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">TCP/IP</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g3" data-w="76%"></div></div>
+                    </div>
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">Config</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g3" data-w="72%"></div></div>
+                    </div>
+                    <div class="sk-bar-row">
+                        <span class="sk-bar-name">Debug</span>
+                        <div class="sk-bar-track"><div class="sk-bar-fill g3" data-w="68%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ===== EDUCATION & CERTIFICATIONS ===== -->
+<section class="sec sec-alt" id="education">
+    <div class="wrap">
+        <div class="sec-label rv">Education & Certifications</div>
+        <h2 class="sec-title rv">Learning Journey</h2>
+        <p class="sec-desc rv">Formal education enriched with industry-recognized certifications from India's top institutions.</p>
+        <div class="edu-split">
+            <div class="edu-left rv">
+                <h3>🎓 Academic Education</h3>
+                <div class="edu-card">
+                    <span class="tag" style="background:var(--c-primary-glow);color:var(--c-primary);">2022 — Present</span>
+                    <h4>Bachelor of Computer Applications (BCA)</h4>
+                    <div class="org" style="color:var(--c-primary);">3rd Year — Currently Pursuing</div>
+                    <p>
+                        Building a comprehensive foundation in programming, database management,
+                        data analytics, networking, and software development through an intensive
+                        and well-rounded academic curriculum.
+                    </p>
+                </div>
+            </div>
+            <div class="edu-right rv rv-d2">
+                <h3>📜 Add-on Certifications</h3>
+                <div class="edu-card">
+                    <span class="tag" style="background:var(--c-sky-glow);color:var(--c-sky);">IIT Bombay</span>
+                    <h4>E-SIM Technology</h4>
+                    <div class="org" style="color:var(--c-sky);">Online Add-on Course</div>
+                    <p>
+                        Explored embedded SIM architecture, deployment models, and applications
+                        in modern IoT ecosystems and next-generation telecommunications.
+                    </p>
+                </div>
+                <div class="edu-card">
+                    <span class="tag" style="background:var(--c-violet-glow);color:var(--c-violet);">IIT Bombay</span>
+                    <h4>GIMP — Image Editing & Design</h4>
+                    <div class="org" style="color:var(--c-violet);">Online Add-on Course</div>
+                    <p>
+                        Mastered open-source graphic design and image manipulation using GIMP
+                        for creating professional-quality visual content and marketing assets.
+                    </p>
+                </div>
+                <div class="edu-card">
+                    <span class="tag" style="background:var(--c-secondary-glow);color:var(--c-secondary);">Srishti Innovative</span>
+                    <h4>Data Analytics</h4>
+                    <div class="org" style="color:var(--c-secondary);">Add-on Certification</div>
+                    <p>
+                        Comprehensive training in data collection, cleaning, exploratory analysis,
+                        statistical methods, data visualization, and business intelligence reporting.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== EXPERIENCE ===== -->
+<section class="sec" id="experience">
+    <div class="wrap">
+        <div class="sec-label rv">Experience</div>
+        <h2 class="sec-title rv">Professional Exposure</h2>
+        <p class="sec-desc rv">Gaining invaluable real-world experience at one of India's premier technical institutions.</p>
+        <div class="exp-center rv">
+            <div class="exp-card">
+                <div class="exp-head">
+                    <div>
+                        <h3>Intern — Data Analytics & Research</h3>
+                        <div class="exp-org">Indian Institute of Technology (IIT), Palakkad</div>
+                    </div>
+                    <div class="exp-live">
+                        <span class="dot"></span>
+                        Currently Working
+                    </div>
+                </div>
+                <div class="exp-period">Ongoing · IIT Palakkad, Kerala, India</div>
+                <p class="exp-body">
+                    Contributing to data-driven research and development initiatives at IIT Palakkad,
+                    working alongside experienced faculty members and research scholars. This role involves
+                    applying programming and analytical skills to solve complex, real-world problems in a
+                    collaborative and intellectually stimulating environment.
+                </p>
+                <ul class="exp-points">
+                    <li>
+                        <span class="icon">▸</span>
+                        <span>Analyzing and processing complex datasets to derive actionable insights for ongoing research projects</span>
+                    </li>
+                    <li>
+                        <span class="icon">▸</span>
+                        <span>Collaborating with IIT faculty and research scholars on multi-phase project deliverables</span>
+                    </li>
+                    <li>
+                        <span class="icon">▸</span>
+                        <span>Leveraging Python, SQL, and Excel to automate data workflows and streamline reporting processes</span>
+                    </li>
+                    <li>
+                        <span class="icon">▸</span>
+                        <span>Documenting research findings and contributing to technical reports and presentations</span>
+                    </li>
+                    <li>
+                        <span class="icon">▸</span>
+                        <span>Gaining hands-on experience with industry-standard tools, methodologies, and research protocols</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section class="sec sec-alt" id="contact">
+    <div class="wrap">
+        <div class="sec-label rv">Contact</div>
+        <h2 class="sec-title rv">Let's Connect</h2>
+        <p class="sec-desc rv">Actively seeking opportunities in data analytics and programming. I'd love to hear from you.</p>
+        <div class="contact-split">
+            <div class="contact-left rv">
+                <h3>Ready to Collaborate 🤝</h3>
+                <p>
+                    Whether you're offering a job opportunity, looking for a collaborator on an exciting project,
+                    or simply want to network — I'm always open to meaningful conversations. Feel free to
+                    reach out through any of the channels below.
+                </p>
+                <div class="contact-methods">
+                    <a href="tel:+911234567890" class="cm">
+                        <div class="cm-icon" style="background:var(--c-secondary-glow);">📱</div>
+                        <div class="cm-info">
+                            <strong>+91 12345 67890</strong>
+                            <span>Phone · Available 9 AM – 9 PM IST</span>
+                        </div>
+                    </a>
+                    <a href="mailto:nigel.praveen@email.com" class="cm">
+                        <div class="cm-icon" style="background:var(--c-primary-glow);">📧</div>
+                        <div class="cm-info">
+                            <strong>nigel.praveen@email.com</strong>
+                            <span>Email · Response within 24 hours</span>
+                        </div>
+                    </a>
+                    <a href="https://linkedin.com/in/nigel-praveen" target="_blank" rel="noopener" class="cm">
+                        <div class="cm-icon" style="background:var(--c-violet-glow);">💼</div>
+                        <div class="cm-info">
+                            <strong>linkedin.com/in/nigel-praveen</strong>
+                            <span>LinkedIn · 850+ Followers</span>
+                        </div>
+                    </a>
+                    <div class="cm">
+                        <div class="cm-icon" style="background:var(--c-amber-glow);">📍</div>
+                        <div class="cm-info">
+                            <strong>India</strong>
+                            <span>Open to Remote & On-site Opportunities</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-card rv rv-d2">
+                <h4>Send Me a Message ✉️</h4>
+                <form onsubmit="submitForm(event)">
+                    <div class="fg">
+                        <label for="c-name">Your Name</label>
+                        <input type="text" id="c-name" placeholder="Jane Smith" required>
+                    </div>
+                    <div class="fg">
+                        <label for="c-email">Email Address</label>
+                        <input type="email" id="c-email" placeholder="jane@company.com" required>
+                    </div>
+                    <div class="fg">
+                        <label for="c-subject">Subject</label>
+                        <input type="text" id="c-subject" placeholder="Job Opportunity / Collaboration">
+                    </div>
+                    <div class="fg">
+                        <label for="c-msg">Message</label>
+                        <textarea id="c-msg" rows="5" placeholder="Tell me about the opportunity..." required></textarea>
+                    </div>
+                    <button type="submit" class="fg-submit" id="formBtn">Send Message ✉️</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+    <div class="footer-wrap">
+        <div class="footer-socials">
+            <a href="https://linkedin.com/in/nigel-praveen" target="_blank" rel="noopener" class="fs" title="LinkedIn">💼</a>
+            <a href="mailto:nigel.praveen@email.com" class="fs" title="Email">📧</a>
+            <a href="tel:+911234567890" class="fs" title="Phone">📱</a>
+            <a href="https://github.com/nigel-praveen" target="_blank" rel="noopener" class="fs" title="GitHub">🐙</a>
+            <a href="#hero" class="fs" title="Back to Top">⬆️</a>
+        </div>
+        <p class="footer-copy">
+            © 2025 <span class="hi">Nigel Praveen</span>. Designed &amp; built with purpose.
         </p>
-        <p className="mt-1 truncate text-white">{value}</p>
-      </div>
-    </a>
-  );
-}
+    </div>
+</footer>
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+    // ── Mobile Nav Toggle ──
+    const burger = document.getElementById('burger');
+    const navLinks = document.getElementById('navLinks');
+
+    burger.addEventListener('click', () => {
+        navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', () => navLinks.classList.remove('open'));
+    });
+
+    // ── Navbar Scroll ──
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+        nav.classList.toggle('stuck', window.scrollY > 50);
+    });
+
+    // ── Active Nav Link ──
+    const allSecs = document.querySelectorAll('section[id]');
+    window.addEventListener('scroll', () => {
+        const y = window.scrollY + 120;
+        allSecs.forEach(sec => {
+            const top = sec.offsetTop;
+            const h = sec.offsetHeight;
+            const id = sec.getAttribute('id');
+            const link = document.querySelector(`.nav-links a[href="#${id}"]:not(.nav-resume)`);
+            if (link) {
+                link.classList.toggle('current', y >= top && y < top + h);
+            }
+        });
+    });
+
+    // ── Scroll Reveal ──
+    const reveals = document.querySelectorAll('.rv');
+    const checkReveal = () => {
+        reveals.forEach(el => {
+            if (el.getBoundingClientRect().top < window.innerHeight - 50) {
+                el.classList.add('vis');
+            }
+        });
+    };
+    window.addEventListener('scroll', checkReveal);
+    window.addEventListener('load', checkReveal);
+
+    // ── Skill Bar Animation ──
+    const animateBars = () => {
+        document.querySelectorAll('.sk-bar-fill').forEach(bar => {
+            if (bar.getBoundingClientRect().top < window.innerHeight) {
+                bar.style.width = bar.dataset.w;
+            }
+        });
+    };
+    window.addEventListener('scroll', animateBars);
+    window.addEventListener('load', () => setTimeout(animateBars, 600));
+
+    // ── Typed Role Effect ──
+    const roles = ['Data Analyst', 'Python Developer', 'BCA Student', 'IIT Intern', 'Problem Solver'];
+    const typedEl = document.getElementById('typedRole');
+    let roleIdx = 0, charIdx = 0, deleting = false;
+
+    function typeLoop() {
+        const current = roles[roleIdx];
+        if (!deleting) {
+            typedEl.textContent = current.substring(0, charIdx + 1);
+            charIdx++;
+            if (charIdx === current.length) {
+                deleting = true;
+                setTimeout(typeLoop, 1800);
+                return;
+            }
+            setTimeout(typeLoop, 90);
+        } else {
+            typedEl.textContent = current.substring(0, charIdx);
+            charIdx--;
+            if (charIdx < 0) {
+                deleting = false;
+                charIdx = 0;
+                roleIdx = (roleIdx + 1) % roles.length;
+                setTimeout(typeLoop, 400);
+                return;
+            }
+            setTimeout(typeLoop, 50);
+        }
+    }
+    setTimeout(typeLoop, 1200);
+
+    // ── Form Handler ──
+    function submitForm(e) {
+        e.preventDefault();
+        const name = document.getElementById('c-name').value;
+        const email = document.getElementById('c-email').value;
+        const subject = document.getElementById('c-subject').value || 'Contact from Portfolio';
+        const message = document.getElementById('c-msg').value;
+
+        const mailto = `mailto:nigel.praveen@email.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`;
+        window.location.href = mailto;
+
+        const btn = document.getElementById('formBtn');
+        btn.textContent = '✓ Opening Email Client...';
+        btn.style.background = 'linear-gradient(135deg, #00d4aa, #38bdf8)';
+        setTimeout(() => {
+            btn.textContent = 'Send Message ✉️';
+            btn.style.background = '';
+            e.target.reset();
+        }, 3500);
+    }
+</script>
+
+</body>
+</html>
